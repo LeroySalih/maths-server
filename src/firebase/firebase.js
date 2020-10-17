@@ -29,6 +29,8 @@ class Firebase {
 
   }
 
+  
+
   doMicrosoftSignIn = () => {
 
     var provider = new this.auth.OAuthProvider('microsoft.com');
@@ -59,6 +61,8 @@ class Firebase {
   });
 
   }
+
+  userProfile = (uid) => ( this.db.ref('user-profile').child(uid) )
   messages = () => this.db.ref('messages');
 
 
