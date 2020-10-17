@@ -6,12 +6,19 @@ import AuthTest from '../auth-test';
 import SignIn from '../sign-in';
 import FirebaseContext from '../firebase';
 
+import {useHistory} from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+
+import Button from '@material-ui/core/Button'
 
 export default () => {
 
   const firebase = useContext(FirebaseContext)
   const {userAuth, userProfile} = useContext(AppContext);
   const [registerProfile, setRegsiterProfile] = useState(userProfile || {});
+
+  const { enqueueSnackbar } = useSnackbar();
+  let history = useHistory();
 
   const handleChange = (name, value) => {
 
@@ -21,8 +28,17 @@ export default () => {
 
   }
 
-  const handleRegsiter = () => {
-    firebase.userProfile(userAuth.uid).update(registerProfile)
+  const handleRegister = () => {
+    console.log()
+    firebase.userProfile(userAuth.uid)
+        .update(registerProfile)
+        .then(() => {enqueueSnackbar('Profile Updated', { variant: 'success' });})
+        .catch((error) => {enqueueSnackbar('There was an issue updating your profile.', { variant: 'error' });})
+  }
+
+
+  if (userAuth === null){
+    history.push('/');
   }
 
   return (
@@ -45,7 +61,7 @@ export default () => {
 
         <div>{JSON.stringify(registerProfile)}</div>
 
-        <button onClick={handleRegsiter}>Register</button>
+        <Button onClick={handleRegister} color="primary" variant="contained">Register</Button>
         
     </div>
   );

@@ -3,11 +3,15 @@ import './App.css';
 import FirebaseContext, {firebase} from '../firebase'
 
 import {BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-dom' 
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 import AppContext from './app-context'
 import LandingPage from '../landing-page'
 import ErrorPage from '../error-page'
 import RegisterPage from '../register-page'
+import SessionPage from '../session-page';
+
+import Navbar from '../navbar';
 
 function App() {
   console.log('Starting');
@@ -56,19 +60,21 @@ function App() {
     })
   }, [])
   return (
-    <FirebaseContext.Provider value={firebase}>
-      <AppContext.Provider value={{ userAuth, userProfile}}>
-        
-        
-          <Switch>
-            <Route path="/" exact component={LandingPage}/>
-            <Route path="/register"  component={RegisterPage}/>
-
-            <Route path="*" component={ErrorPage}/>
-          </Switch>
-        
-      </AppContext.Provider>
-    </FirebaseContext.Provider>
+    <SnackbarProvider maxSnack={3}>
+      <FirebaseContext.Provider value={firebase}>
+        <AppContext.Provider value={{ userAuth, userProfile}}>
+          
+            <Navbar/>
+            <Switch>
+              <Route path="/" exact component={LandingPage}/>
+              <Route path="/register"  component={RegisterPage}/>
+              <Route path="/session/:sessionId" component={SessionPage}/>
+              <Route path="*" component={ErrorPage}/>
+            </Switch>
+          
+        </AppContext.Provider>
+      </FirebaseContext.Provider>
+    </SnackbarProvider>
   );
 }
 
