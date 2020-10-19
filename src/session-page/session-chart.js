@@ -53,7 +53,7 @@ export default ({data}) => {
       ]
     }
   )
-  console.log(`Plotting`, data)
+  
   return (
     <Line 
     

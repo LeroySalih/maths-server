@@ -62,6 +62,10 @@ class Firebase {
 
   }
 
+  doSignOut = () => {
+    return firebase.auth().signOut()
+  }
+
   userProfile = (uid) => ( this.db.ref('user-profile').child(uid) )
   messages = () => this.db.ref('messages');
 

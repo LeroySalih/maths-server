@@ -5,9 +5,9 @@ import Button from '@material-ui/core/Button';
 
 export default () => {
 
-  const {userProfile} = useContext(AppContext);
+  const {userAuth, userProfile} = useContext(AppContext);
 
-  if (userProfile === null){
+  if (!userAuth || !userProfile){
     return (<Button color="inherit">Sign In</Button>)
   }
   return (

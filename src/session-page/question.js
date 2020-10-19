@@ -23,7 +23,7 @@ export default ({question, onAnswer}) => {
   const handleChange = (e) => {
     const name = e.target.name
     const value = e.target.value
-    setForm((prev) => ({ ...form, [name]: parseInt(value)}) );
+    setForm((prev) => ({ ...form, [name]: value}) );
   }
 
   const handleClick = () => {

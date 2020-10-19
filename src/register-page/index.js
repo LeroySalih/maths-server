@@ -60,11 +60,15 @@ export default () => {
 
   }
 
+  const handleExited = () => {
+    history.push('/')
+  }
+
   const handleRegister = () => {
     console.log()
     firebase.userProfile(userAuth.uid)
         .update(registerProfile)
-        .then(() => {enqueueSnackbar('Profile Updated', { variant: 'success' });})
+        .then(() => {enqueueSnackbar('Profile Updated', { onExited: handleExited, variant: 'success' });})
         .catch((error) => {enqueueSnackbar('There was an issue updating your profile.', { variant: 'error' });})
   }
 
