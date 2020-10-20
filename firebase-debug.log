@@ -1,0 +1,34 @@
+[debug] [2020-10-20T02:00:01.303Z] ----------------------------------------------------------------------
+[debug] [2020-10-20T02:00:01.305Z] Command:       /usr/local/lib/node_modules/firebase-tools/lib/bin/firebase.js /Users/leroy/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase deploy
+[debug] [2020-10-20T02:00:01.305Z] CLI Version:   8.12.1
+[debug] [2020-10-20T02:00:01.305Z] Platform:      darwin
+[debug] [2020-10-20T02:00:01.305Z] Node Version:  v12.18.1
+[debug] [2020-10-20T02:00:01.309Z] Time:          Tue Oct 20 2020 05:00:01 GMT+0300 (Arabian Standard Time)
+[debug] [2020-10-20T02:00:01.309Z] ----------------------------------------------------------------------
+[debug] [2020-10-20T02:00:01.310Z] 
+[debug] [2020-10-20T02:00:01.321Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-10-20T02:00:01.321Z] > authorizing via signed-in user
+[debug] [2020-10-20T02:00:01.322Z] [iam] checking project maths-server for permissions ["firebase.projects.get","firebasedatabase.instances.update","firebasehosting.sites.update"]
+[debug] [2020-10-20T02:00:01.323Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2020-10-20T02:00:01.323Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2020-10-20T02:00:02.267Z] <<< HTTP RESPONSE 200 {"expires":"Mon, 01 Jan 1990 00:00:00 GMT","pragma":"no-cache","cache-control":"no-cache, no-store, max-age=0, must-revalidate","date":"Tue, 20 Oct 2020 02:00:02 GMT","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-Q050=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-27=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-10-20T02:00:02.287Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/maths-server:testIamPermissions  
+ {"permissions":["firebase.projects.get","firebasedatabase.instances.update","firebasehosting.sites.update"]}
+[debug] [2020-10-20T02:00:04.187Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Tue, 20 Oct 2020 02:00:04 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=1252","alt-svc":"h3-Q050=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-27=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-10-20T02:00:04.189Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/maths-server  
+ 
+[debug] [2020-10-20T02:00:05.523Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Tue, 20 Oct 2020 02:00:05 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-Q050=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-27=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] 
+[info] === Deploying to 'maths-server'...
+[info] 
+[info] i  deploying database, hosting 
+[info] i  database: checking rules syntax... 
+[debug] [2020-10-20T02:00:05.532Z] >>> HTTP REQUEST PUT https://maths-server.firebaseio.com/.settings/rules.json?dryRun=true  
+ {
+  /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}

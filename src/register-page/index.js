@@ -1,16 +1,12 @@
 import React, {useState, useContext} from 'react'
 import {AppContext} from '../app'
 import styled from 'styled-components'
-import ConnectTest from '../connect-test'
-import AuthTest from '../auth-test';
-import SignIn from '../sign-in';
 import FirebaseContext from '../firebase';
 
 import {useHistory} from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/Button'
+import Button from '@material-ui/core/Button';
 
 const RegisterPage = styled.div`
   display: flex;
@@ -65,7 +61,7 @@ export default () => {
   }
 
   const handleRegister = () => {
-    console.log()
+
     firebase.userProfile(userAuth.uid)
         .update(registerProfile)
         .then(() => {enqueueSnackbar('Profile Updated', { onExited: handleExited, variant: 'success' });})
@@ -83,8 +79,6 @@ export default () => {
   return (
     <RegisterPage>
       <Container>
-        
-        
         <Form>
           <form>
           <h1 style={{paddingTop: "0px", marginTop: "0px"}}>Register Page</h1>

@@ -2,27 +2,29 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import FirebaseContext, {firebase} from '../firebase'
 
-import {BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-dom' 
-import { SnackbarProvider, useSnackbar } from 'notistack';
+import { Route, Switch, useHistory} from 'react-router-dom' 
+import { SnackbarProvider } from 'notistack';
 
 import AppContext from './app-context'
 import LandingPage from '../landing-page'
 import ErrorPage from '../error-page'
 import RegisterPage from '../register-page'
 import SessionPage from '../session-page';
+import TeacherPage from '../teacher-page';
 
 import Navbar from '../navbar';
 
 function App() {
-  console.log('Starting');
+  console.log('Starting App');
   
   const [userAuth, setUserAuth] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
 
-
   var history = useHistory();
 
   useEffect(() => {
+    document.title = "Streaks";
+
     firebase.auth().onAuthStateChanged(authUser => {
 
       // No current user.
@@ -32,9 +34,6 @@ function App() {
       }
 
       setUserAuth(authUser);
-
-      console.log("New User Detected", authUser)
-      console.log("Getting User Profile for", authUser.uid)
 
       // listen to the user profile for this Auth User
       firebase.userProfile(authUser.uid).on('value', (snapshot) => {
@@ -52,13 +51,16 @@ function App() {
 
           const userProfile = snapshot.val();
           userProfile['uid'] = authUser.uid;
+          document.title = `Streaks - ${userProfile.firstName} ${userProfile.familyName}`
           setUserProfile(userProfile);
 
         }
-      })
+      }); 
       
-    })
-  }, [])
+    }) // firebaseAuthChanged
+    
+    },[]);
+
   return (
     <SnackbarProvider maxSnack={3}>
       <FirebaseContext.Provider value={firebase}>
@@ -69,6 +71,7 @@ function App() {
               <Route path="/" exact component={LandingPage}/>
               <Route path="/register"  component={RegisterPage}/>
               <Route path="/session/:sessionId" component={SessionPage}/>
+              <Route path="/teacher/:sessionId" component={TeacherPage}/>
               <Route path="*" component={ErrorPage}/>
             </Switch>
           

@@ -26,7 +26,7 @@ export default () => {
   }
 
   const checkButtonEnabled = () => {
-    return sessionId.length === 5
+    return sessionId.length >= 5
   }
 
   if (!userAuth || !userProfile)

@@ -2,11 +2,23 @@ import React, {useEffect, useState} from 'react';
 
 import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
+import styled from 'styled-components';
 
+const QuestionText = styled.div`
+  font-family: 'Open Sans';
+  font-size: 5rem;
+`
+
+const AnswerInput = styled.div`
+  border : solid 1px silver;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+`
 export default ({question, onAnswer}) => {
 
   const [form, setForm] = useState({})
-  const [isCorrect, setIsCorrect] = useState(null);
+  // const [isCorrect, setIsCorrect] = useState(null);
 
   useEffect(()=>{
     setForm({})
@@ -29,17 +41,24 @@ export default ({question, onAnswer}) => {
   const handleClick = () => {
     
     const correct = question.isCorrect(form.answer)
-    setIsCorrect(correct);
     onAnswer && onAnswer({question, answer: form.answer, isCorrect : correct})
+
+    //setIsCorrect(correct);
     
   }
 return <div>
-        {question.text}
-        <Input value={form.answer || ""} name="answer" onChange={handleChange}/>
-        <Button onClick={handleClick}>Check</Button>
-        <div>{isCorrect && (<span>Correct</span>)}</div>
-        <div>{isCorrect === false && (<span>Incorrect</span>)}</div>
-        <div>{isCorrect === null && (<span>Not Answered</span>)}</div>
+        
+        <QuestionText>{question.text}</QuestionText>
+        <AnswerInput>
+          
+          <Input style={{flex: 1}}value={form.answer || ""} 
+                 name="answer" 
+                 onChange={handleChange}/>
+
+          <Button onClick={handleClick}>Check</Button>
+
+        </AnswerInput>
+        
         
         </div>
 }

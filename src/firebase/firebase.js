@@ -15,11 +15,7 @@ const config = {
 class Firebase {
 
 
-  constructor() {
-    console.log(`Creating New Instance of APP ${process.env.REACT_APP_DATABASE_URL}`)
-    
-    console.log(config);
-    
+  constructor() {    
     app.initializeApp(config)
 
     this.auth = app.auth;
@@ -46,8 +42,6 @@ class Firebase {
 
     firebase.auth().signInWithPopup(provider)
       .then(function(result) {
-        console.log('User is signed in')
-        console.log(result)
     // User is signed in.
     // IdP data available in result.additionalUserInfo.profile.
     // OAuth access token can also be retrieved:
@@ -66,7 +60,9 @@ class Firebase {
     return firebase.auth().signOut()
   }
 
+  userProfiles = () => this.db.ref('user-profile')
   userProfile = (uid) => ( this.db.ref('user-profile').child(uid) )
+  session = (sessionId) => this.db.ref('sessions').child(sessionId)
   messages = () => this.db.ref('messages');
 
 

@@ -9,14 +9,11 @@ export default () => {
 
   const firebase = useContext(FirebaseContext);
   const app = useContext(AppContext);
-  
-  console.log(firebase);
-  console.log(app)
 
   useEffect(()=>{
-    console.log('Looking for messages')
+
     firebase.messages().on('value', (snapshot) => {
-      console.log(snapshot.val());
+
       setConnected(true);
     })
   }, [firebase])

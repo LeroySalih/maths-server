@@ -4,6 +4,9 @@ import Question from './question';
 import styled from 'styled-components';
 import FirebaseContext from '../firebase';
 import {AppContext} from '../app';
+import StreakLogo from '../streak-logo';
+import {useSnackbar} from 'notistack';
+
 import SessionChart from './session-chart'
 import {
   addPositivePositive,
@@ -57,6 +60,46 @@ const Panel = styled.div`
   display: flex;
   flex-direction: column;
 `
+const StreakPanel = styled.div`
+  display: grid;
+  grid-template-columns : 100px 200px 100px;
+  grid-template-rows: 30px;
+  grid-template-areas: "logo current" "logo highest";
+  border-bottom: solid silver 3px;
+`
+
+
+const StreakCurrent = styled.div`
+  font-family: 'Open Sans';
+  font-size: 1.5rem;
+`
+
+const StreakHighest = styled.div`
+  font-family: 'Open Sans';
+  font-size: 1.5rem;
+`
+
+const streakColor = (score) => {
+  const intScore = parseInt(score)
+  
+  if (intScore >= 0 && intScore < 10)  return '100'; 
+  if (intScore >= 10 && intScore < 20) return '200'; 
+  if (intScore >= 20) return 255;
+
+}
+
+const StreakCurrentScore = styled.div`
+  font-family: 'Open Sans';
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: ${(props) => `rgb(${streakColor(props.score)}, 0, 0)`}
+`
+
+const StreakHighestScore = styled.div`
+  font-family: 'Open Sans';
+  font-size: 1.5rem;
+  font-weight: bold;
+`
 
 
 const questionKeys = {
@@ -85,21 +128,21 @@ const questionKeys = {
 }
 
 const sessions = {
-  'add' : { questions : [
+  'add-all' : { questions : [
     'add_p_p',
     'add_n_p',
     'add_p_n',
     'add_n_n',
   ] },
 
-  'sub' : { questions : [
+  'sub-all' : { questions : [
     'sub_p_p',
     'sub_n_p',
     'sub_p_n',
     'sub_n_n',
   ] },
 
-  'mult' : { questions : [
+  'mult-all' : { questions : [
     'mult_p_p',
     'mult_n_p',
     'mult_p_n',
@@ -137,9 +180,24 @@ export default () => {
   const QUESTIONS_PER_LEVEL = 3;
   const [questions, setQuestions] = useState(null);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect (()=> {
-    setQuestions (sessions[sessionId].questions);
-  }, [sessionId])
+    if (!sessions[sessionId])
+      return;
+
+    const q = sessions[sessionId].questions;
+    setQuestions (q);
+
+    if (!userProfile)
+      return;
+
+    // new session so add the user.
+    firebase.session(sessionId)
+        .child(userProfile.uid)
+        .child('name')
+        .set(`${userProfile.firstName} ${userProfile.familyName}`)
+  }, [sessionId, userProfile])
 
 
   
@@ -157,12 +215,21 @@ export default () => {
   }, [currentIndex])
 
   useEffect(()=> {
+
     if (userProfile){
+
+      // Update the User Profile
       firebase.userProfile(userProfile.uid)
-      .child('sessions')
-      .child(sessionId)
-      .child('highest-streak')
-      .set(getHighest())
+        .child('sessions')
+        .child(sessionId)
+        .child('highestStreak')
+        .set(getHighest())
+
+      // Update the Sessions with the highest streak
+      firebase.session(sessionId)
+        .child(userProfile.uid)
+        .child('highestStreak')
+        .set(getHighest())
     }
     
   }, [history])
@@ -175,15 +242,16 @@ export default () => {
       .child('sessions')
       .child(sessionId)
       .child('streak')
-      .set(streak)
+      .set(streak);
 
-      
-  
+
+      firebase.session(sessionId)
+      .child(userProfile.uid)
+      .child('streak')
+      .set(streak);
 
     }
 
-
-    
     if (streak === 0)
       // reset index to start questions form start
       setCurrentIndex(0)
@@ -192,17 +260,21 @@ export default () => {
   }, [streak])
 
   const questionLevel = (currentIndex, questions) => {
-    //console.log(`Question Level`, (Math.floor(currentIndex / QUESTIONS_PER_LEVEL)) % questions.length)
     return (!currentIndex || currentIndex < 0 || !questions) ? 0 : (Math.floor(currentIndex / QUESTIONS_PER_LEVEL)) % questions.length;
   }
 
+  const moveNextQuestion = (isCorrect) => {
+    if (isCorrect) {
+      setStreak((prev) => prev + 1)
+    } else {
+      setStreak(0)
+    }
+  }
   const handleOnAnswer = (answer) => {
-    console.log('Called', answer)
     
-    console.log(`Setting history for ${userProfile.uid}`)
-
     const historyObj = {answer: answer.answer, text: answer.question.text, isCorrect: answer.isCorrect, ts: Date.now()};
-    console.log(historyObj);
+    
+    console.log(historyObj)
 
     // update the history
     firebase.userProfile(userProfile.uid)
@@ -210,27 +282,40 @@ export default () => {
       .child(sessionId)
       .child('history')
       .push(historyObj)
+      .then(() => {
+        if (answer.isCorrect)
+          enqueueSnackbar('Correct :) ', { autoHideDuration: 800, onExited: () => moveNextQuestion(true), variant: 'success' });
+        else
+          enqueueSnackbar('Whoops!', { autoHideDuration: 800, onExited: () => moveNextQuestion(false), variant: 'error' });
+      })
+      .catch(() => {
+        enqueueSnackbar('Error! Something went wrong writing the history.', { autoHideDuration: 800, onExited: () => moveNextQuestion(true), variant: 'error' });
+      })
       
 
 
-    if (answer.isCorrect) {
-      setStreak((prev) => prev + 1)
-    } else {
-      setStreak(0)
-    }
+    
   }
 
   const getHighest = () => {
-  
-    return Math.max(...history)
+    return history && history.length > 0 ? Math.max(...history) : 0;
     
   }
+
+  if (!questions) 
+    return <div>No questions found for sessionId:  {sessionId}</div>
 
   return <Page>
     <Container>
       <Panel>
-        <div>Current Streak: {streak}</div>
-        <div>Highest Streak: {getHighest()}</div>
+        <StreakPanel>
+          <div style={{gridArea: "logo"}}><StreakLogo/></div>
+          <StreakCurrent>Current Streak: </StreakCurrent>
+          <StreakCurrentScore score={streak}>{streak}</StreakCurrentScore>
+          <StreakHighest>Highest Streak: </StreakHighest>
+          <StreakHighestScore>{getHighest()}</StreakHighestScore>
+        </StreakPanel>
+        
         <Question question={currentQuestion} onAnswer={handleOnAnswer}/>
         
         <div style={{width: "200px", height: "200px"}}>

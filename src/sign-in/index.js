@@ -19,7 +19,7 @@ export default () => {
 
   const handleSignOut = () => {
     firebase.doSignOut()
-      .then(() => {console.log(`userAuth signed out`)})
+      
   }
 
   if (userAuth && userProfile) 
