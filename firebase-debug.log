@@ -1,0 +1,20 @@
+[debug] [2020-10-21T11:24:05.551Z] ----------------------------------------------------------------------
+[debug] [2020-10-21T11:24:05.553Z] Command:       /Users/leroy/.nvm/versions/node/v14.3.0/bin/node /Users/leroy/.nvm/versions/node/v14.3.0/bin/firebase deploy
+[debug] [2020-10-21T11:24:05.553Z] CLI Version:   8.13.0
+[debug] [2020-10-21T11:24:05.553Z] Platform:      darwin
+[debug] [2020-10-21T11:24:05.553Z] Node Version:  v14.3.0
+[debug] [2020-10-21T11:24:05.554Z] Time:          Wed Oct 21 2020 14:24:05 GMT+0300 (Arabian Standard Time)
+[debug] [2020-10-21T11:24:05.554Z] ----------------------------------------------------------------------
+[debug] [2020-10-21T11:24:05.555Z] 
+[debug] [2020-10-21T11:24:05.562Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-10-21T11:24:05.562Z] > authorizing via signed-in user
+[debug] [2020-10-21T11:24:05.563Z] [iam] checking project maths-server for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasedatabase.instances.update","firebasehosting.sites.update"]
+[debug] [2020-10-21T11:24:05.565Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2020-10-21T11:24:05.565Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2020-10-21T11:24:35.582Z] [iam] error while checking permissions, command may fail: FirebaseError: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2020-10-21T11:24:35.583Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2020-10-21T11:24:35.583Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
