@@ -189,12 +189,14 @@ export default () => {
   const {userProfile} = useContext(AppContext);
   const firebase = useContext(FirebaseContext);
 
-  const [currentIndex, setCurrentIndex] = useState(-1);
+  const [currentIndex, setCurrentIndex] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [streak, setStreak] = useState(0);
   const [history, setHistory] = useState([]);
   const QUESTIONS_PER_LEVEL = 3;
   const [questions, setQuestions] = useState(null);
+
+  const [userSession, setUserSession ] = useState(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -208,17 +210,29 @@ export default () => {
     if (!userProfile)
       return;
 
-    // new session so add the user.
+    // Set the session Id
+    setCurrentIndex(0)
+
+    // listen to the session/uid object for changes.
     firebase.session(sessionId)
-        .child(userProfile.uid)
-        .child('name')
-        .set(`${userProfile.firstName} ${userProfile.familyName}`)
+            .child(userProfile.uid)
+            .on('value', (snapshot) => {
+              setUserSession(snapshot.val())
+              
+            });
+
+    // new session so add the user if it has not already been added.
+    // this will not change the streak or history if they already exist. 
+    // firebase.session(sessionId)
+    //    .child(userProfile.uid)
+    //    .child('name')
+    //    .set(`${userProfile.firstName} ${userProfile.familyName}`)
   }, [sessionId, userProfile])
 
 
   
 
-
+  // The index has changed so generate the next question.
   useEffect(()=> {
     if (questions){
       const modifiedIndex = questionLevel(currentIndex, questions)
@@ -227,95 +241,113 @@ export default () => {
       const question = questionFn();
       setCurrentQuestion(question)
     }
-    
   }, [currentIndex])
 
-  useEffect(()=> {
+  // useEffect(()=> {
 
-    if (userProfile){
+  //  if (userProfile){
 
       // Update the User Profile
-      firebase.userProfile(userProfile.uid)
-        .child('sessions')
-        .child(sessionId)
-        .child('highestStreak')
-        .set(getHighest())
+  //    firebase.userProfile(userProfile.uid)
+  //      .child('sessions')
+  //      .child(sessionId)
+  //      .child('highestStreak')
+  //      .set(getHighest())
 
       // Update the Sessions with the highest streak
-      firebase.session(sessionId)
-        .child(userProfile.uid)
-        .child('highestStreak')
-        .set(getHighest())
-    }
+      // firebase.session(sessionId)
+      //  .child(userProfile.uid)
+      //  .child('highestStreak')
+      //   .set(getHighest())
+   //  }
     
-  }, [history])
+  // }, [history])
 
-  useEffect(() => {
-    setHistory((prev) => [...prev, streak])
+  // useEffect(() => {
+  //   setHistory((prev) => [...prev, streak])
 
-    if (userProfile){
-      firebase.userProfile(userProfile.uid)
-      .child('sessions')
-      .child(sessionId)
-      .child('streak')
-      .set(streak);
+  //   if (userProfile){
+  //     firebase.userProfile(userProfile.uid)
+  //     .child('sessions')
+  //     .child(sessionId)
+  //     .child('streak')
+  //     .set(streak);
 
 
-      firebase.session(sessionId)
-      .child(userProfile.uid)
-      .child('streak')
-      .set(streak);
+  //     firebase.session(sessionId)
+  //     .child(userProfile.uid)
+  //     .child('streak')
+  //     .set(streak);
 
-    }
+  //   }
 
-    if (streak === 0)
-      // reset index to start questions form start
-      setCurrentIndex(0)
-    else
-      setCurrentIndex((prev) => prev + 1)
-  }, [streak])
+  //   if (streak === 0)
+  //     // reset index to start questions form start
+  //     setCurrentIndex(0)
+  //   else
+  //     setCurrentIndex((prev) => prev + 1)
+  // }, [streak])
 
   const questionLevel = (currentIndex, questions) => {
     return (!currentIndex || currentIndex < 0 || !questions) ? 0 : (Math.floor(currentIndex / QUESTIONS_PER_LEVEL)) % questions.length;
   }
 
-  const moveNextQuestion = (isCorrect) => {
-    if (isCorrect) {
-      setStreak((prev) => prev + 1)
-    } else {
-      setStreak(0)
-    }
+  const moveNextQuestion = () => {
+    setCurrentIndex((prev) => (prev + 1) % questions.length)
   }
+
+  const getData = () => {
+    return (userSession) ? userSession.history.map((entry) => entry.streak) : [];
+  }
+  
+
+  // Recieved a new answer, so update the history, streak and highestStreak score.
   const handleOnAnswer = (answer) => {
     
-    const historyObj = {answer: answer.answer, text: answer.question.text, isCorrect: answer.isCorrect, ts: Date.now()};
-    
-    console.log(historyObj)
+    const historyObj = {
+      answer: answer.answer, 
+      text: answer.question.text, 
+      isCorrect: answer.isCorrect, 
+      streak: userProfile.streak || 0,
+      ts: Date.now()
+    };
 
-    // update the history
-    firebase.userProfile(userProfile.uid)
-      .child('sessions')
-      .child(sessionId)
-      .child('history')
-      .push(historyObj)
-      .then(() => {
-        if (answer.isCorrect)
-          enqueueSnackbar('Correct :) ', { autoHideDuration: 800, onExited: () => moveNextQuestion(true), variant: 'success' });
-        else
-          enqueueSnackbar('Whoops!', { autoHideDuration: 800, onExited: () => moveNextQuestion(false), variant: 'error' });
-      })
-      .catch(() => {
-        enqueueSnackbar('Error! Something went wrong writing the history.', { autoHideDuration: 800, onExited: () => moveNextQuestion(true), variant: 'error' });
-      })
-      
 
+    let tmpSessionObj = userSession;
+
+    // no session onject exists, so create a default one.
+    if (!tmpSessionObj)
+      tmpSessionObj = {
+          name: `${userProfile.firstName} ${userProfile.familyName}`, 
+          streak: 0, 
+          highestStreak: 0,
+          history: []
+      };
 
     
-  }
+    // Update the streak and highest streak.
+    if (answer.isCorrect) {
 
-  const getHighest = () => {
-    return history && history.length > 0 ? Math.max(...history) : 0;
-    
+      tmpSessionObj.streak = tmpSessionObj.streak + 1;
+      tmpSessionObj.highestStreak = Math.max(tmpSessionObj.highestStreak, tmpSessionObj.streak);
+      historyObj.streak = tmpSessionObj.streak;
+    } else {
+      tmpSessionObj.streak = 0
+    }
+
+    // Add the answer to the history.  
+    tmpSessionObj.history.push(historyObj);
+
+    moveNextQuestion(); 
+    firebase.session(sessionId)
+          .child(userProfile.uid)
+          .set(tmpSessionObj)
+          .then(() => {
+            enqueueSnackbar('Correct :) ', { autoHideDuration: 800, onExited: () => {}, variant: 'success' });
+          }) 
+          .catch(() => {
+            enqueueSnackbar('Error! Something went wrong writing the history.', { autoHideDuration: 800, onExited: () => {}, variant: 'error' });
+          });
   }
 
   if (!questions) 
@@ -327,15 +359,16 @@ export default () => {
         <StreakPanel>
           <div style={{gridArea: "logo"}}><StreakLogo/></div>
           <StreakCurrent>Current Streak: </StreakCurrent>
-          <StreakCurrentScore score={streak}>{streak}</StreakCurrentScore>
+          <StreakCurrentScore score={(userSession && userSession.streak) || 0}>{(userSession && userSession.streak) || 0}</StreakCurrentScore>
           <StreakHighest>Highest Streak: </StreakHighest>
-          <StreakHighestScore>{getHighest()}</StreakHighestScore>
+          <StreakHighestScore>{(userSession && userSession.highestStreak) || 0}</StreakHighestScore>
         </StreakPanel>
         
         <Question question={currentQuestion} onAnswer={handleOnAnswer}/>
         
         <div style={{width: "200px", height: "200px"}}>
-        <SessionChart data={history}/>
+        <SessionChart data={getData()}/>
+        
         </div>
         </Panel>
     </Container>
