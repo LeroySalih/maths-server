@@ -11,6 +11,8 @@
     "chart.js": "^2.9.3",
     "dotenv": "^8.2.0",
     "firebase": "^7.24.0",
+    "firebase-admin": "^9.2.0",
+    "firebase-functions": "^3.11.0",
     "notistack": "^0.9.17",
     "react": "^16.14.0",
     "react-chartjs-2": "^2.10.0",

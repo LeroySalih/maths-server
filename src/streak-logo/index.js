@@ -19,8 +19,9 @@ const StreakLogo = styled.img`
   width: 50px
 `
 
-export default () => {
-  return (<StreakLogoContainer>
+export default (props) => {
+  return (
+  <StreakLogoContainer {...props}>
     <StreakLogo src={StreakImg} alt="Streak Logo"/>
   </StreakLogoContainer>);
 }

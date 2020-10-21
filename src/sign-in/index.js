@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 const SignInButton = styled.img`
   width: 200px
 `
-export default () => {
+export default (props) => {
 
   const firebase = useContext(FirebaseContext);
   const {userAuth,userProfile} = useContext(AppContext);
@@ -23,12 +23,12 @@ export default () => {
   }
 
   if (userAuth && userProfile) 
-    return (<div>
+    return (<div {...props}>
               <h1>Welcome back, {userProfile.firstName}</h1>
               <h3>
                 <Button onClick={handleSignOut}>Sign Out</Button>
               </h3>
             </div>)
 
-  return (<SignInButton src={MicrsoftSignIn} onClick={handleOnClick} alt="Sign In with Microsoft account"/>)
+  return (<SignInButton {...props} src={MicrsoftSignIn} onClick={handleOnClick} alt="Sign In with Microsoft account"/>)
 }

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 
 import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
@@ -17,14 +17,24 @@ const AnswerInput = styled.div`
 `
 export default ({question, onAnswer}) => {
 
-  const [form, setForm] = useState({})
+  const [form, setForm] = useState({});
+  const answerInputRef = useRef(null);
   // const [isCorrect, setIsCorrect] = useState(null);
 
   useEffect(()=>{
     setForm({})
+    
+
+    if (answerInputRef.current)
+    {
+      console.log('Setting focus to InputRef:', answerInputRef.current)
+      answerInputRef.current.focus();
+    }
   }, 
   [question]
   )
+
+  
 
 
 
@@ -53,7 +63,9 @@ return <div>
           
           <Input style={{flex: 1}}value={form.answer || ""} 
                  name="answer" 
-                 onChange={handleChange}/>
+                 onChange={handleChange}
+                 inputRef={answerInputRef}
+                 />
 
           <Button onClick={handleClick}>Check</Button>
 

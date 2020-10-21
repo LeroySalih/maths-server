@@ -64,7 +64,7 @@ export default () => {
 
     firebase.userProfile(userAuth.uid)
         .update(registerProfile)
-        .then(() => {enqueueSnackbar('Profile Updated', { onExited: handleExited, variant: 'success' });})
+        .then(() => {enqueueSnackbar('Profile Updated', { onExited: handleExited, variant: 'success',  autoHideDuration: 800, });})
         .catch((error) => {enqueueSnackbar('There was an issue updating your profile.', { variant: 'error' });})
   }
 
