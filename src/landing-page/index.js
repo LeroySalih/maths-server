@@ -86,7 +86,10 @@ const Text = styled.div`
   margin-top: 15px;
 `
 
-
+const Version = styled.div`
+  font-size: 0.3rem;
+  color: silver;
+`
 
 
 export default () => {
@@ -105,6 +108,7 @@ export default () => {
                   Answer questions correctly to build a streak.  The more you answer the higher the streak.  But don't break your streak, or you'll slide to 0.
                 </Text>
                 <LaunchSession/>
+                <Version>0.1</Version>
               </PanelTitle>
 
               <SignInPanel>
