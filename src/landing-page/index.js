@@ -108,7 +108,7 @@ export default () => {
                   Answer questions correctly to build a streak.  The more you answer the higher the streak.  But don't break your streak, or you'll slide to 0.
                 </Text>
                 <LaunchSession/>
-                <Version>0.1</Version>
+                <Version>0.1.0.1</Version>
               </PanelTitle>
 
               <SignInPanel>

@@ -12,6 +12,8 @@ import RegisterPage from '../register-page'
 import SessionPage from '../session-page';
 import TeacherPage from '../teacher-page';
 
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+
 import Navbar from '../navbar';
 
 function App() {
@@ -63,6 +65,10 @@ function App() {
 
   return (
     <SnackbarProvider maxSnack={3}>
+      <GoogleReCaptchaProvider
+            reCaptchaKey="6LeDGNoZAAAAAFUjeBkINneB3Ji3nb4VsJquc-EB"
+            
+          >
       <FirebaseContext.Provider value={firebase}>
         <AppContext.Provider value={{ userAuth, userProfile}}>
           
@@ -77,6 +83,7 @@ function App() {
           
         </AppContext.Provider>
       </FirebaseContext.Provider>
+      </GoogleReCaptchaProvider>
     </SnackbarProvider>
   );
 }

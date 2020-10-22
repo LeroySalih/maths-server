@@ -8,6 +8,11 @@ import { useSnackbar } from 'notistack';
 
 import Button from '@material-ui/core/Button';
 
+import {
+  GoogleReCaptchaProvider,
+  GoogleReCaptcha
+} from 'react-google-recaptcha-v3';
+
 const RegisterPage = styled.div`
   display: flex;
   background-color: #fbfbfb;
@@ -60,6 +65,10 @@ export default () => {
     history.push('/')
   }
 
+  const handleReCaptchaChange = (value) => {
+    console.log("Captcha value:", value);
+  }
+
   const handleRegister = () => {
 
     firebase.userProfile(userAuth.uid)
@@ -106,6 +115,11 @@ export default () => {
                 onChange={(e) => handleChange(e.target.name, e.target.value)}/>
 
           </InputField>
+
+          
+          <GoogleReCaptcha onVerify={handleReCaptchaChange} />
+          
+          
 
           <Button onClick={handleRegister} color="primary" variant="contained">Register</Button>
           </form>

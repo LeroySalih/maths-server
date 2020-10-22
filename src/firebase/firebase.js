@@ -11,6 +11,10 @@ const config = {
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
 };
 
+if (window.location.hostname === "localhost") {
+  config.databaseURL = "http://localhost:9000?ns=maths-server"
+}
+
 
 class Firebase {
 
@@ -20,9 +24,6 @@ class Firebase {
 
     this.auth = app.auth;
     this.db = app.database();
-
-    
-
   }
 
   
